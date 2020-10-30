@@ -57,15 +57,29 @@ class Options(MutableMapping):
                 import ipywidgets
 
                 title = ipywidgets.HTML("<h2>Cluster Options</h2>")
-                children = [item for f in self._fields.values() for item in f.widget()]
-                form = ipywidgets.GridBox(
-                    children=children,
-                    layout=ipywidgets.Layout(
-                        justify_content="flex-start",
-                        grid_template_columns="auto auto auto",
-                        grid_gap="5px 5px",
-                    ),
-                )
+
+                labels = []
+                inputs = []
+                statuses = []
+
+                for f in self._fields.values():
+                    lab = f.widget()[0]
+                    lab.layout = ipywidgets.Layout(width="200px", height="30px")
+                    labels.append(lab)
+
+                    inp = f.widget()[1]
+                    inp.layout = ipywidgets.Layout(width="350px", height="30px")
+                    inputs.append(inp)
+
+                    stat = f.widget()[2]
+                    stat.layout = ipywidgets.Layout(width="350px", height="30px")
+                    statuses.append(stat)
+
+                labels_box = ipywidgets.VBox(children=labels)
+                inputs_box = ipywidgets.VBox(children=inputs)
+                statuses_box = ipywidgets.VBox(children=statuses)
+                form = ipywidgets.HBox(children=[labels_box, inputs_box, statuses_box])
+
                 widget = ipywidgets.VBox(children=[title, form])
             except ImportError:
                 widget = None
@@ -321,9 +335,7 @@ class Mapping(Field):
 
     def validate(self, x):
         if not isinstance(x, dict):
-            raise TypeError(
-                "%s must be a dict, got %r" % (self.field, type(x).__name__)
-            )
+            raise TypeError("%s must be a dict, got %r" % (self.field, type(x).__name__))
         return x
 
     def transform(self, value):
