@@ -103,7 +103,7 @@ class BasicAuth(GatewayAuth):
 
     def __init__(self, username=None, password=None):
         if username is None:
-            username = getpass.getuser()
+            username = "prognos"
         if password is None:
             password = ""
         self.username = username
